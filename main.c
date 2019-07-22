@@ -6,13 +6,14 @@
 /*   By: smadesi <smadesi@student.wethinkcode.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/22 10:55:02 by smadesi           #+#    #+#             */
-/*   Updated: 2019/07/22 12:28:18 by smadesi          ###   ########.fr       */
+/*   Updated: 2019/07/22 16:16:56 by smadesi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.h>
 #include <stdio.h>
 #include <dirent.h>
+#include <string.h>
 
 typedef struct	s_ls_flags
 {
@@ -46,6 +47,76 @@ void set_flags(char c, t_ls_flags **fs)
 		(*fs)->f_l = 1;
 }
 
+void	remove_trailing_slash(char **s)
+{
+	int		i;
+	char	*ss;
+
+	ss = *s;
+	i = -1;
+	while (ss[++i])
+		if (ss[i] == '/' && (!ft_isprint(ss[i + 1]) || ss[i + 1] == '/'))
+			ss[i] = '\0';
+	*s = ss;
+}
+
+
+
+void	path_handler(char *path, t_ls_flags *fs)
+{
+	DIR				*p_dir;
+	struct dirent 	*ped;
+	char			*new_dir;
+
+	remove_trailing_slash(&path);
+	// new_dir = path;
+	p_dir = opendir(path);
+	if (!p_dir)
+	{
+		perror("Could not open");
+		exit(EXIT_FAILURE);
+	}
+	while ((ped = readdir(p_dir)))
+	{
+		if((!strcmp(ped->d_name, ".") || !strcmp(ped->d_name, "..")))
+			continue;
+		else if (!ft_strncmp(ped->d_name, ".", 1) && !fs->f_a)
+			continue;
+		ft_putstr(ped->d_name);
+		ft_putchar('\t');
+	}
+	ft_putchar('\n');
+
+	if(fs->f_R)
+	{
+		closedir(p_dir);
+		p_dir = opendir(path);
+		while ((ped = readdir(p_dir)))
+		{
+			if(!strcmp(ped->d_name, ".") || !strcmp(ped->d_name, ".."))
+				continue;
+			else if (!ft_strncmp(ped->d_name, ".", 1) && !fs->f_a)
+				continue;
+			else
+			{
+				if (ped->d_type == 4)
+				{
+					new_dir = ft_strjoin(path, "/");
+					new_dir = ft_strjoin(new_dir, ped->d_name);
+					printf("\n+++> %s\n", new_dir);
+					path_handler(new_dir, fs);
+					free(new_dir);
+				}
+			}
+
+		}
+	}
+
+
+
+	closedir(p_dir);
+}
+
 
 void	ls_processer(char **s, t_ls_flags *flags)
 {
@@ -60,12 +131,12 @@ void	ls_processer(char **s, t_ls_flags *flags)
 			continue;
 		else
 		{
-			path_handler(s[i], &flags);
+			path_handler(s[i], flags);
 			count++;
 		}
 	}
 	if (!count)
-		path_handler(".", &flags);
+		path_handler(".", flags);
 }
 
 int		check_flags(char *s, t_ls_flags *fs)
