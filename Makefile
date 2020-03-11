@@ -1,22 +1,27 @@
-CFLAGS = -Wall -Wextra -Werror
+NAME = ft_ls.a
 
-NAME = ft_ls
+FLAGS = -g -Wall -Wextra -Werror -c
 
-SRC = ft_ls.c
+SRC = ./ft_ls.c
 
-OBJ = ft_ls.o
+OBJS = ./ft_ls.o
 
 all: $(NAME)
 
 $(NAME):
-	@gcc -c $(SRC)
-	@ar rc $(NAME) $(OBJ)
-	@ranlib	$(NAME)
+		gcc $(FLAGS) $(SRC) 
+		ar rc $(NAME) $(OBJS)
+		ranlib $(NAME)
 
 clean:
-	@rm *.o
+		rm -f $(OBJS)
 
-fclean: clean
-	@rm $(NAME)
- 
-re : fclean all 
+fclean:
+		rm -f $(NAME)
+
+re: fclean all
+
+lin:
+		gcc -o ft_ls test.c ft_ls.a ./libft/libft.a
+
+.PHONY: re, fclean, clean, all

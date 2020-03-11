@@ -6,42 +6,31 @@
 /*   By: smadesi <smadesi@student.wethinkcode.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/22 10:55:02 by smadesi           #+#    #+#             */
-/*   Updated: 2019/07/22 16:16:56 by smadesi          ###   ########.fr       */
+/*   Updated: 2020/03/11 09:40:59 by smadesi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <dirent.h>
-#include <stdio.h>
-#include <string.h>
-#include "libft/libft.h"
-
-typedef struct s_ls_flags {
-    int f_a;
-    int f_R;
-    int f_l;
-    int f_r;
-    int f_t;
-} t_ls_flags;
+#include "ft_ls.h"
 
 void init_flags(t_ls_flags *flags) {
-    flags->f_a = 0;
-    flags->f_R = 0;
-    flags->f_l = 0;
-    flags->f_r = 0;
-    flags->f_t = 0;
+    flags->PARAM_A = 0;
+    flags->PARAM_R = 0;
+    flags->PARAM_L = 0;
+    flags->PARAM_r = 0;
+    flags->PARAM_T = 0;
 }
 
 void set_flags(char c, t_ls_flags **fs) {
     if (c == 'a')
-        (*fs)->f_a = 1;
+        (*fs)->PARAM_A = 1;
     else if (c == 'R')
-        (*fs)->f_R = 1;
+        (*fs)->PARAM_R = 1;
     else if (c == 't')
-        (*fs)->f_t = 1;
+        (*fs)->PARAM_T = 1;
     else if (c == 'r')
-        (*fs)->f_r = 1;
+        (*fs)->PARAM_r = 1;
     else if (c == 'l')
-        (*fs)->f_l = 1;
+        (*fs)->PARAM_L = 1;
 }
 
 void remove_trailing_slash(char **s) {
@@ -71,20 +60,20 @@ void path_handler(char *path, t_ls_flags *fs) {
     while ((ped = readdir(p_dir))) {
         if ((!strcmp(ped->d_name, ".") || !strcmp(ped->d_name, "..")))
             continue;
-        else if (!ft_strncmp(ped->d_name, ".", 1) && fs->f_a)
+        else if (!ft_strncmp(ped->d_name, ".", 1) && fs->PARAM_A)
             continue;
         ft_putstr(ped->d_name);
         ft_putchar('\t');
     }
     ft_putchar('\n');
 
-    if (fs->f_R) {
+    if (fs->PARAM_R) {
         closedir(p_dir);
         p_dir = opendir(path);
         while ((ped = readdir(p_dir))) {
             if (!strcmp(ped->d_name, ".") || !strcmp(ped->d_name, ".."))
                 continue;
-            else if (!ft_strncmp(ped->d_name, ".", 1) && !fs->f_a)
+            else if (!ft_strncmp(ped->d_name, ".", 1) && !fs->PARAM_A)
                 continue;
             else {
                 if (ped->d_type == 4) {
@@ -97,43 +86,6 @@ void path_handler(char *path, t_ls_flags *fs) {
             }
         }
     }
-    // else if (fs->f_r) {
-    //         int count;
-    //         if (fs->f_r)  //Reverse sorting of-r parameters
-    //         {
-    //             for (int i = 0; i < count - 1; i++) {
-    //                 for (int j = 0; j < count - 1 - i; j++) {
-    //                     if (strcmp(ped->d_name[j], ped->d_name[j + 1]) < 0) {
-    //                         ft_strcpy(new_dir, ped->d_name[j]);
-    //                         ft_strcpy(ped->d_name[j], ped->d_name[j + 1]);
-    //                         ft_strcpy(ped->d_name[j + 1], new_dir);
-    //                     }
-    //                 }
-    //             }
-    //         } else  //Forward sort
-    //         {
-    //             for (int i = 0; i < count - 1; i++) {
-    //                 for (int j = 0; j < count - 1 - i; j++) {
-    //                     if (ft_strcmp(ped->d_name[j], ped->d_name[j + 1]) > 0) {
-    //                         ft_strcpy(new_dir, ped->d_name[j]);
-    //                         ft_strcpy(ped->d_name[j], ped->d_name[j + 1]);
-    //                         ft_strcpy(ped->d_name[j + 1], new_dir);
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //         if (chdir(path) < 0) {
-    //             my_err("chdir", __LINE__);
-    //         }
-    //         display(ped->d_name, count);
-    //         if ((fs->f_l == 0 && !(fs->f_r)))
-    //             write(1, "\n", 1);
-    //     }
-    //     // } else if (fs->f_l) {
-    //     // }
-
-    //     closedir(p_dir);
 }
 void ls_processer(char **s, t_ls_flags *flags) {
     int i;
@@ -155,7 +107,7 @@ void ls_processer(char **s, t_ls_flags *flags) {
 
 int check_flags(char *s, t_ls_flags *fs) {
     int i;
-    int j;
+    size_t j;
     char *s2;
     int count;
 
@@ -193,13 +145,4 @@ void ft_ls(char **str) {
         }
     }
     ls_processer(str, &flags);
-}
-
-int main(int ac, char *av[]) {
-    ft_ls(av);
-    // while (1)
-    // {
-    // }
-    // init_flags(&flags);
-    return 0;
 }

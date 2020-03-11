@@ -1,15 +1,4 @@
-#include <dirent.h>
-#include <errno.h>
-#include <grp.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <time.h>
-#include <unistd.h>
+#include "ft_ls.h"
 
 #define PARAM_NONE 0  //Since bitwise operations are used later, let's introduce flag=0 when there are no parameters; then - a,-l,-R,-r, defined as 1, 2, 4, 8.
 #define PARAM_A 1     //It happens to be 1, 10, 100, 1000 in binary. This is convenient for | and & in operations, such as having both a and r parameters, then flag is 1001.
@@ -22,7 +11,7 @@ char PATH[PATH_MAX + 1];  //Storage path
 int flag;
 
 int g_leave_len = MAX_STRING_LEN;
-int g_maxlen;
+size_t g_maxlen;
 
 void my_err(const char* err_string, int line);
 void display_dir(char* path);
@@ -116,13 +105,14 @@ void display_attribute(char* name)  //Print the - l parameter in the correspondi
     printf("%-8s ", psd->pw_name);
     printf("%-8s ", grp->gr_name);
 
-    printf("%6d", buf.st_size);
+    printf("%6lld", buf.st_size);
     strcpy(buff_time, ctime(&buf.st_mtime));
     buff_time[strlen(buff_time) - 1] = '\0';  //Buffe_time has its own newline, so you need to remove the following newline character
     printf("  %s  ", buff_time);
     cprint(name, buf.st_mode);
     printf("\n");
 }
+
 void displayR_attribute(char* name)  //When l and R are both available, display_attribute is first called to print, and then the function is responsible for recursion.
 {
     struct stat buf;
@@ -299,8 +289,8 @@ void display_dir(char* path)  //This function is used to process directories
         my_err("opendir", __LINE__);
     g_maxlen = 0;
     while ((ptr = readdir(dir)) != NULL) {
-        if (g_maxlen < strlen(ptr->d_name))
-            g_maxlen = strlen(ptr->d_name);
+        if (g_maxlen < ft_strlen(ptr->d_name))
+            g_maxlen = ft_strlen(ptr->d_name);
         count++;
     }
     closedir(dir);
@@ -350,12 +340,13 @@ void display_dir(char* path)  //This function is used to process directories
     }
 
     display(filenames, count);
-    if ((flag & PARAM_L == 0 && !(flag | PARAM_R)))
+    if ((flag && PARAM_L == 0 && !(flag | PARAM_R)))
         printf("\n");
 }
 
 int main(int argc, char** argv) {
-    int i, j, k = 0, num = 0;
+    int i, k = 0, num = 0;
+    size_t j;
     char param[32] = "";                                     //Used to save command line parameters
     char* path[1];                                           //Save the path, which I don't want to define as an array of pointers, but it's the only way to define a function parameter corresponding to the char ** type that follows
     path[0] = (char*)malloc(sizeof(char) * (PATH_MAX + 1));  //Since it's a pointer type, we need to allocate space PATH_MAX to it. It's a system-defined macro with a value of 4096. Strictly, add 1 to store'\0'.
@@ -364,7 +355,7 @@ int main(int argc, char** argv) {
                                                              //Command line parameter parsing, save the following parameters to param
     for (i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
-            for (j = 1; j < strlen(argv[i]); j++) {
+            for (j = 1; j < ft_strlen(argv[i]); j++) {
                 param[k] = argv[i][j];
                 k++;
             }
