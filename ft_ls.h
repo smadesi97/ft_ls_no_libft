@@ -28,11 +28,11 @@
 #include "libft/libft.h"
 
 typedef struct s_ls_flags {
-    int PARAM_A;
-    int PARAM_R;
-    int PARAM_L;
-    int PARAM_r;
-    int PARAM_T;
+    int f_a;
+    int f_R;
+    int f_l;
+    int f_r;
+    int f_t;
 } t_ls_flags;
 
 void init_flags(t_ls_flags *flags);
@@ -42,13 +42,15 @@ void path_handler(char *path, t_ls_flags *fs);
 void ls_processer(char **s, t_ls_flags *flags);
 int check_flags(char *s, t_ls_flags *fs);
 void ft_ls(char **str);
-void my_err(const char *err_string, int line);
-void cprint(char *name, mode_t st_mode);
-void display_attribute(char *name);
-void displayR_attribute(char *name);
-void display_single(char *name);
-void displayR_single(char *name);
-void display(char **name, int count);
-void display_dir(char *path);
+// char *GetPerm(const char *path, char *perms);
+// char GetType(const char *path);
+// void my_err(const char *err_string, int line);
+// void cprint(char *name, mode_t st_mode);
+// void display_attribute(char *name);
+// void displayR_attribute(char *name);
+// void display_single(char *name);
+// void displayR_single(char *name);
+// void display(char **name, int count);
+// void display_dir(char *path);
 
 #endif
