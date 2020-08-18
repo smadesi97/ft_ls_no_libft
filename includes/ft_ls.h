@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ls.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: smadesi <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: smadesi <smadesi@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/11 09:00:03 by smadesi           #+#    #+#             */
 /*   Updated: 2020/03/11 09:00:07 by smadesi          ###   ########.fr       */
@@ -25,9 +25,10 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
-#include "libft/libft.h"
+#include "../libft/includes/libft.h"
 
-typedef struct s_ls_flags {
+typedef struct s_ls_flags
+{
     int f_a;
     int f_R;
     int f_l;
@@ -41,16 +42,11 @@ void remove_trailing_slash(char **s);
 void path_handler(char *path, t_ls_flags *fs);
 void ls_processer(char **s, t_ls_flags *flags);
 int check_flags(char *s, t_ls_flags *fs);
+int validate_flags(char *s, t_ls_flags *fs);
 void ft_ls(char **str);
-// char *GetPerm(const char *path, char *perms);
-// char GetType(const char *path);
-// void my_err(const char *err_string, int line);
-// void cprint(char *name, mode_t st_mode);
-// void display_attribute(char *name);
-// void displayR_attribute(char *name);
-// void display_single(char *name);
-// void displayR_single(char *name);
-// void display(char **name, int count);
-// void display_dir(char *path);
+void dash_R(DIR *p_dir, t_ls_flags *fs, char *path);
+void dash_a(DIR *p_dir, char *path, t_ls_flags *fs);
+void dash_t(DIR *p_dir, char *path);
+void dash_l(DIR *p_dir, t_ls_flags *fs, char *path);
 
 #endif
